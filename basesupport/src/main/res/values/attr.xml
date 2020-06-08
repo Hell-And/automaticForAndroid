@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="BlockView">
+        <attr name="block_backgroundcolor" format="color"/>
+        <attr name="block_radius" format="dimension"/>
+        <attr name="block_text" format="string"/>
+        <attr name="block_textColor" format="color"/>
+        <attr name="block_enable" format="boolean"/>
+        <attr name="block_textSize" format="dimension"></attr>
+        <attr name="block_stroke_width" format="dimension"></attr>
+        <attr name="block_solid" format="boolean"></attr>
+        <attr name="block_solid_color" format="color"></attr>
+    </declare-styleable>
+
+</resources>

@@ -129,7 +129,8 @@ public class AliPayMonitor {
                                 //暂时还无法区分具体是哪一种
                                 if (isClickNode(child)) {
                                     Log.d(TAG, "findWebViewNode: getActionList " + child.getActionList().size());
-
+//                                    child.getBoundsInParent();
+//                                    child.getWindow().getLayer()
                                     GestureDescriptionUtil.clickMonitor(accessibilityServiceMonitor, child, null);
 
                                     //准备一个bitmap对象，用来将copy出来的区域绘制到此对象中
@@ -142,8 +143,8 @@ public class AliPayMonitor {
 //                                            imageReader.getSurface(), null, null);
 //
 //                                    GBData.reader = imageReader;
-
-                                    break;
+                                    return;
+//                                    break;
                                 }
                             }
                         }
@@ -161,7 +162,6 @@ public class AliPayMonitor {
 //                        if (child.getParent().getParent().getClassName().equals(""))
                         clickNode.add(child);
                     }
-                    ;
 
 //                    handler.postDelayed(new Runnable() {
 //                        @Override

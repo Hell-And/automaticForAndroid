@@ -69,10 +69,10 @@ public class DouyinServiceMonitor extends AccessibilityService {
                     serviceInfo = getServiceInfo();
                     serviceInfo.flags = serviceInfo.flags | AccessibilityServiceInfo.FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY;
                     setServiceInfo(serviceInfo);
-//                    TaobaoActionMonitor.policy(this,nodeInfo, packageName, className);
+                    TaobaoActionMonitor.policy(this,nodeInfo, packageName, className);
                     AliPayMonitor.policy(this,nodeInfo, packageName, className);
 
-//                    XiaokeSignMonitor.policy(this, nodeInfo, packageName, className);
+                    XiaokeSignMonitor.policy(this, nodeInfo, packageName, className);
                 }
                 break;
             case AccessibilityEvent.TYPE_VIEW_TEXT_TRAVERSED_AT_MOVEMENT_GRANULARITY:

@@ -2,7 +2,6 @@ package com.lixiang.douyin_follow.monitor;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
-import android.app.Activity;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.os.Handler;
@@ -32,7 +31,7 @@ public class TaobaoActionMonitor {
         ) {
             return;
         }
-        List<AccessibilityNodeInfo> homeFlag = nodeInfo.findAccessibilityNodeInfosByText("潮流服饰买买买");
+        List<AccessibilityNodeInfo> homeFlag = nodeInfo.findAccessibilityNodeInfosByText("进口好货买买买");
         if (homeFlag.size() > 0) {
             AccessibilityNodeInfo homeFlagNode = homeFlag.get(0);
             Rect rect = new Rect();
@@ -53,7 +52,7 @@ public class TaobaoActionMonitor {
 //            handler.postDelayed(new Runnable() {
 //                @Override
 //                public void run() {
-                if (nodeInfo != null) findWebViewNode(nodeInfo);
+                if (nodeInfo != null) findWebViewNode(accessibilityServiceMonitor, nodeInfo);
 //                }
 //            }, 1000l);
             }
@@ -64,20 +63,19 @@ public class TaobaoActionMonitor {
     }
 
 
-    private static void findWebViewNode(final AccessibilityNodeInfo nodeInfo) {
+    private static void findWebViewNode(DouyinServiceMonitor accessibilityServiceMonitor, final AccessibilityNodeInfo nodeInfo) {
 //        AccessibilityNodeInfo accessibilityNodeInfoWebView = null;
         for (int i = 0; i < nodeInfo.getChildCount(); i++) {
 //            List<AccessibilityNodeInfo> childBottom = nodeInfo.findAccessibilityNodeInfosByViewId("taskBottomSheet");
             final AccessibilityNodeInfo child = nodeInfo.getChild(i);
             if (child == null) continue;
 //            Log.d(TAG,child.getClassName().toString()+" - "+ childBottom.size());
-            if ("android.widget.Button".equals(child.getClassName())) {
+            if (child.getText() != null) {
+                String text = child.getText().toString();
+                if ("android.widget.Button".equals(child.getClassName())) {
 //                Log.d("findWebViewNode--", "找到android.widget.Button");
 //                getRecordButton(child);
-
-                String text = child.getText().toString();
 //        Log.d(TAG, "getRecordButton: "+ Log.d(TAG, charSequence.toString()));
-                if (text != null) {
                     if (text.equals("做任务，领喵币")) {
                         if (child.isClickable()) {
                             handler.postDelayed(new Runnable() {
@@ -94,15 +92,15 @@ public class TaobaoActionMonitor {
                             break;
                         }
                     }
+//                return;
+                } else if (text.contains("任务已完成") || text.contains("今日已达上限")) {
+                    accessibilityServiceMonitor.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
+                    return;
                 }
-
-//                return;
-            } else if ("android.widget.ListView".equals(child.getClassName())) {
-//                getRecordListView(child);
-//                return;
             }
+
             if (child.getChildCount() > 0) {
-                findWebViewNode(child);
+                findWebViewNode(accessibilityServiceMonitor, child);
             }
         }
     }

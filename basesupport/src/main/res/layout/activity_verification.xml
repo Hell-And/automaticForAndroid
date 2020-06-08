@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".VerificationActivity"
+    tools:ignore="MissingConstraints">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        app:bl_corners_radius="5dp"
+        app:bl_stroke_color="#D5D4D4"
+        app:bl_stroke_width="1px">
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="识别号: "
+            android:textColor="#333333"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_deviceCode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:textIsSelectable="true"/>
+        <TextView
+            android:id="@+id/tv_copyImei"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="5dp"
+            android:gravity="fill_vertical"
+            android:text="复制"
+            android:textSize="11sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        app:bl_corners_radius="5dp"
+        app:bl_stroke_color="#D5D4D4"
+        app:bl_stroke_width="1px">
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="日期: "
+            android:textColor="#333333"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_dateTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_weight="1"
+            android:textColor="#333333"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/tv_activationCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:minHeight="40dp"
+        android:padding="5dp"
+        android:background="@null"
+        app:bl_corners_radius="5dp"
+        android:textSize="14sp"
+        android:hint="联系管理员获取激活码"
+        android:gravity="center_vertical"
+        app:bl_stroke_color="#D5D4D4"
+        app:bl_stroke_width="1px" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+
+        <Button
+            android:id="@+id/bt_getVerCoe"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="获取激活码"
+            android:layout_marginRight="10dp"
+            android:textSize="16sp"
+            android:textColor="@android:color/white"
+            android:background="@null"
+            app:bl_ripple_color="#016659"
+            app:bl_ripple_enable="true"
+            app:bl_corners_radius="5dp"
+            app:bl_pressed_drawable="#016659"
+            app:bl_unPressed_drawable="#008577"
+            android:visibility="gone"
+            />
+
+        <Button
+            android:id="@+id/bt_verification"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="验证"
+            android:textSize="16sp"
+            android:textColor="@android:color/white"
+            android:background="@null"
+            app:bl_ripple_color="#016659"
+            app:bl_ripple_enable="true"
+            app:bl_corners_radius="5dp"
+            app:bl_pressed_drawable="#016659"
+            app:bl_unPressed_drawable="#008577"/>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/tv_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:layout_margin="10dp"
+        android:textColor="@android:color/holo_red_light"
+        android:text="qwewqeqweeqe"/>
+</LinearLayout>

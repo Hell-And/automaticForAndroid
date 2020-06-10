@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:id="@+id/group0">
+        <item
+            android:id="@+id/menu_super_user"
+            android:title="超级用户" />
+
+        <!--<item
+            android:id="@+id/menu_"
+            android:title="联系管理员"
+            />-->
+    </group>
+    <group android:id="@+id/group1">
+        <item
+            android:id="@+id/menu_douyin"
+            app:actionViewClass="android.widget.Switch"
+            android:title="抖音" />
+
+        <item
+            android:id="@+id/menu_taobao"
+            app:actionViewClass="android.widget.Switch"
+            android:title="淘宝" />
+        <item
+            android:id="@+id/menu_ali"
+            app:actionViewClass="android.widget.Switch"
+            android:title="支付宝" />
+        <item
+            android:id="@+id/menu_xiaoke"
+            app:actionViewClass="android.widget.Switch"
+            android:title="逍客" />
+    </group>
+</menu>

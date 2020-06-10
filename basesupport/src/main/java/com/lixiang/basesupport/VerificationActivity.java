@@ -27,6 +27,7 @@ public class VerificationActivity extends BaseActivity {
     private TextView tvDeviceNo, tvDateTime, tvActivationCode, tvResult, tv_copyImei;
     private Button btGetVerCoe, btVerification;
     private boolean hasPermission = false;
+    private String distinguishCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,19 +73,23 @@ public class VerificationActivity extends BaseActivity {
 
                 if (!hasPermission) {
                     tvResult.setText("必要权限未打开！");
+                    requestPermis();
                     return;
                 }
 
-                String userActivationCode=tvActivationCode.getText().toString();
+                String userActivationCode = tvActivationCode.getText().toString();
                 if (TextUtils.isEmpty(userActivationCode)) {
                     tvResult.setText("请输入激活码");
                     return;
                 }
-                if (!userActivationCode.equals(VerificationUtil.getInstance().myActivationRule())){
+                if (!userActivationCode.equals(VerificationUtil.getInstance().myActivationRule(distinguishCode))) {
                     tvResult.setText("激活码不正确！");
                     return;
                 }
                 //成功
+                setResult(RESULT_OK, getIntent());
+                finish();
+
             }
         });
 
@@ -96,10 +101,18 @@ public class VerificationActivity extends BaseActivity {
     }
 
 
-
     private void setViewData() {
         tvDateTime.setText(PublicUtil.getFormatDateTime());
-        tvDeviceNo.setText(PublicUtil.getIMEI(this));
+        setDistinguishCodeText();
+    }
+
+    private void setDistinguishCodeText() {
+        if (hasPermission){
+            String IMEI = PublicUtil.getIMEI(mContext);
+            String deviceSn = PublicUtil.getDeviceSN();
+            distinguishCode = VerificationUtil.getInstance().getDistinguishCode(IMEI, deviceSn);
+            tvDeviceNo.setText(distinguishCode);
+        }
     }
 
     @Override
@@ -108,13 +121,19 @@ public class VerificationActivity extends BaseActivity {
         switch (requestCode) {
             case 101:
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    tvDeviceNo.setText(PublicUtil.getIMEI(this));
                     hasPermission = true;
+                    setDistinguishCodeText();
                 }
                 break;
 
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_CANCELED, getIntent());
+        super.onBackPressed();
     }
 }

@@ -31,8 +31,9 @@ public class TaobaoActionMonitor {
         ) {
             return;
         }
-        List<AccessibilityNodeInfo> homeFlag = nodeInfo.findAccessibilityNodeInfosByText("进口好货买买买");
-        if (homeFlag.size() > 0) {
+        List<AccessibilityNodeInfo> homeFlag = nodeInfo.findAccessibilityNodeInfosByText("数码家电买买买");
+        List<AccessibilityNodeInfo> homeFlag1 = nodeInfo.findAccessibilityNodeInfosByText("进口好货买买买");
+        if (homeFlag.size() > 0 || homeFlag1.size() > 0) {
             AccessibilityNodeInfo homeFlagNode = homeFlag.get(0);
             Rect rect = new Rect();
             homeFlagNode.getBoundsInScreen(rect);
@@ -45,8 +46,13 @@ public class TaobaoActionMonitor {
             List<AccessibilityNodeInfo> finishFlag1 = nodeInfo.findAccessibilityNodeInfosByText("任务完成");
             List<AccessibilityNodeInfo> finishFlag2 = nodeInfo.findAccessibilityNodeInfosByText("领取失败");
             List<AccessibilityNodeInfo> finishFlag3 = nodeInfo.findAccessibilityNodeInfosByText("返回重试");
+            List<AccessibilityNodeInfo> finishFlag4 = nodeInfo.findAccessibilityNodeInfosByText("今日已达上限");
             Log.d(TAG, "policy: " + finishFlag1.size());
-            if (finishFlag.size() > 0 || finishFlag1.size() > 0 || finishFlag2.size() > 0 || finishFlag3.size() > 0) {
+            if (finishFlag.size() > 0
+                    || finishFlag1.size() > 0
+                    || finishFlag2.size() > 0
+                    || finishFlag3.size() > 0
+                    || finishFlag4.size() > 0) {
                 accessibilityServiceMonitor.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
             } else {
 //            handler.postDelayed(new Runnable() {

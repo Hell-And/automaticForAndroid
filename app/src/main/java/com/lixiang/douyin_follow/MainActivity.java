@@ -1,10 +1,14 @@
 package com.lixiang.douyin_follow;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -13,17 +17,23 @@ import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.material.navigation.NavigationView;
+import com.lixiang.basesupport.SuperUserActivity;
+import com.lixiang.basesupport.base.BaseActivity;
+import com.lixiang.basesupport.util.PublicUtil;
 import com.lixiang.douyin_follow.model.TimeMonitor;
 import com.lixiang.douyin_follow.service.DouyinServiceMonitor;
 import com.lixiang.douyin_follow.util.AccessibilitUtil;
 import com.lixiang.douyin_follow.util.AlarManagerUtil;
 import com.lixiang.douyin_follow.util.MMKVutil;
 
-public class MainActivity extends AppCompatActivity implements TimePicker.OnTimeChangedListener, CompoundButton.OnCheckedChangeListener {
+public class MainActivity extends BaseActivity implements TimePicker.OnTimeChangedListener, CompoundButton.OnCheckedChangeListener {
     String TAG = MainActivity.class.getSimpleName();
     private Button btnSettings;
     private TimePicker timePickerSign, timepick_signOut;
     private Switch sw_cpdaily_xiaoke, sw_signOut_xiaoke;
+    private NavigationView designNavigationView;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +79,50 @@ public class MainActivity extends AppCompatActivity implements TimePicker.OnTime
                 AccessibilitUtil.showSettingsUI(MainActivity.this);
             }
         });
+
+        designNavigationView = (NavigationView) findViewById(R.id.design_navigation_view);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        initMune();
+        designNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                menuItem.getActionView();
+                Switch sw = (Switch) menuItem.getActionView();
+                switch (menuItem.getItemId()) {
+                    case R.id.menu_super_user:
+                        //进入生成激活码页面
+                        startActivity(new Intent(mContext, SuperUserActivity.class));
+                        break;
+                    case R.id.menu_douyin:
+                        sw.setChecked(!sw.isChecked());
+                        break;
+                    case R.id.menu_taobao:
+                        sw.setChecked(!sw.isChecked());
+                        break;
+                    case R.id.menu_ali:
+                        sw.setChecked(!sw.isChecked());
+                        break;
+                    case R.id.menu_xiaoke:
+                        sw.setChecked(!sw.isChecked());
+                        break;
+                }
+                //关闭侧滑菜单
+//                drawerLayout.closeDrawers();
+                return false;
+            }
+        });
+    }
+
+    private void initMune() {
+        Menu menu = designNavigationView.getMenu();
+        ((Switch) menu.findItem(R.id.menu_douyin).getActionView()).setOnCheckedChangeListener(this);
+        ((Switch) menu.findItem(R.id.menu_taobao).getActionView()).setOnCheckedChangeListener(this);
+        ((Switch) menu.findItem(R.id.menu_ali).getActionView()).setOnCheckedChangeListener(this);
+        ((Switch) menu.findItem(R.id.menu_xiaoke).getActionView()).setOnCheckedChangeListener(this);
+
+        if (!PublicUtil.getIMEI(mContext).equals("865737032360084")) {
+            menu.findItem(R.id.menu_super_user).setVisible(false);
+        }
     }
 
     private void updatePermission() {
@@ -82,8 +136,6 @@ public class MainActivity extends AppCompatActivity implements TimePicker.OnTime
     private void startService() {
         Intent mIntent = new Intent(this, DouyinServiceMonitor.class);
         startService(mIntent);
-
-
     }
 
     @Override
@@ -135,10 +187,16 @@ public class MainActivity extends AppCompatActivity implements TimePicker.OnTime
                     AlarManagerUtil.removeTimer("pm");
                 }
                 break;
-        }
-    }
 
-    public void showText(String text) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+            case R.id.menu_douyin:
+                showToastText(" " + R.id.menu_douyin);
+                break;
+            case R.id.menu_taobao:
+                break;
+            case R.id.menu_ali:
+                break;
+            case R.id.menu_xiaoke:
+                break;
+        }
     }
 }

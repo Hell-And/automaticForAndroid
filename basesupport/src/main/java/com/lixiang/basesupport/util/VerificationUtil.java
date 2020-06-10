@@ -13,11 +13,11 @@ public class VerificationUtil {
         return instance;
     }
 
-    public String myActivationRule() {
+    public String myActivationRule(String distinguishCode) {
         insertHelpIndex = 0;
         String dateTime = PublicUtil.getFormatDateTime();
 //        tvDateTime.setText(dateTime);
-        String md5First = PublicUtil.stringToMD5(PublicUtil.getIMEI(ContextUtil.getContext()) + PublicUtil.getDeviceSN() + dateTime);
+        String md5First = PublicUtil.stringToMD5(distinguishCode + dateTime);
         StringBuffer md5Second = new StringBuffer(md5First);
         int md5Length = md5First.length();
         String dateTimeMillis = String.valueOf(PublicUtil.getFormatDateTimeMillis(dateTime));
@@ -27,7 +27,13 @@ public class VerificationUtil {
         }
         return md5Second.toString();
     }
+
+    public String getDistinguishCode(String IMEI, String deviceSn) {
+        return PublicUtil.stringToMD5(IMEI + deviceSn);
+    }
+
     private int insertHelpIndex = 0;
+
     private char charAt(String dateTimeMillis, int index) {
         if (index >= dateTimeMillis.length()) {
             return charAt(PublicUtil.stringToMD5(dateTimeMillis), insertHelpIndex++);

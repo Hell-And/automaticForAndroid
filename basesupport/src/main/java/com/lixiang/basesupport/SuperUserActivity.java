@@ -1,16 +1,10 @@
 package com.lixiang.basesupport;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.lixiang.basesupport.base.BaseActivity;
 import com.lixiang.basesupport.util.PublicUtil;
 import com.lixiang.basesupport.util.VerificationUtil;
@@ -35,6 +29,7 @@ public class SuperUserActivity extends BaseActivity {
     private void initView() {
         etDeviceCode = (EditText) findViewById(R.id.et_deviceCode);
         tvDateTime = (TextView) findViewById(R.id.tv_dateTime);
+        tvDateTime.setText(PublicUtil.getFormatDateTime());
         tvActivationCode = (TextView) findViewById(R.id.tv_activationCode);
         tvCopyImei = (TextView) findViewById(R.id.tv_copyImei);
         btGetVerCoe = (Button) findViewById(R.id.bt_getVerCoe);
@@ -44,7 +39,12 @@ public class SuperUserActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 tvDateTime.setText(PublicUtil.getFormatDateTime());
-                tvActivationCode.setText(VerificationUtil.getInstance().myActivationRule());
+                String imei=etDeviceCode.getText().toString();
+                if (imei.isEmpty()){
+                    showToastText("没有识别码");
+                    return;
+                }
+                tvActivationCode.setText(VerificationUtil.getInstance().myActivationRule(imei));
             }
         });
         findViewById(R.id.tv_copyImei).setOnClickListener(new View.OnClickListener() {

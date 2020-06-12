@@ -44,8 +44,8 @@ public class XiaokeSignMonitor {
 
         //这里做了个策略，因为锁屏唤醒时，响应不了点击，发现退到手机home页，在进来，就可以响应了
         //所以这里做了一个判断，如果是第一次进来，就先返回home，在AlarmReceiver里有个2s重启的逻辑
-        if (MMKVutil.instance.getBoolean("isFirst",true)){
-            MMKVutil.instance.putBoolean("isFirst",false);
+        if (MMKVutil.instance.getBoolean("isFirst", true)) {
+            MMKVutil.instance.putBoolean("isFirst", false);
             accessibilityServiceMonitor.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME);//退到home页
         }
         if (className.equals("com.facishare.fs.biz_function.subbiz_outdoorsignin.SendOutdoorSigninActivity")) {
@@ -126,24 +126,36 @@ public class XiaokeSignMonitor {
             rect = new Rect();
             nodeInfo.getBoundsInScreen(rect);
         }
-        Path path = new Path();
-        path.moveTo(rect.centerX(), rect.centerY());
-        GestureDescription.Builder builder = new GestureDescription.Builder();
-        builder.addStroke(new GestureDescription.StrokeDescription(path, 100l, 100l));
-        GestureDescription gesture = builder.build();
-        boolean isDispatched = accessibilityServiceMonitor.dispatchGesture(gesture, new AccessibilityService.GestureResultCallback() {
-            @Override
-            public void onCompleted(GestureDescription gestureDescription) {
-                super.onCompleted(gestureDescription);
-                Log.d(TAG, "onCompleted: 完成..........");
-            }
 
-            @Override
-            public void onCancelled(GestureDescription gestureDescription) {
-                super.onCancelled(gestureDescription);
-                Log.d(TAG, "onCompleted: 取消..........");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            Path path = new Path();
+            path.moveTo(rect.centerX(), rect.centerY());
+            GestureDescription.Builder builder = new GestureDescription.Builder();
+            builder.addStroke(new GestureDescription.StrokeDescription(path, 100l, 100l));
+            GestureDescription gesture = builder.build();
+            boolean isDispatched = accessibilityServiceMonitor.dispatchGesture(gesture, new AccessibilityService.GestureResultCallback() {
+                @Override
+                public void onCompleted(GestureDescription gestureDescription) {
+                    super.onCompleted(gestureDescription);
+                    Log.d(TAG, "onCompleted: 完成..........");
+                }
+
+                @Override
+                public void onCancelled(GestureDescription gestureDescription) {
+                    super.onCancelled(gestureDescription);
+                    Log.d(TAG, "onCompleted: 取消..........");
+                }
+            }, null);
+        } else {
+            while (nodeInfo != null) {
+                if (nodeInfo.isClickable()) {
+                    nodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    break;
+                }
+                nodeInfo = nodeInfo.getParent();
             }
-        }, null);
+        }
+
 
        /* GestureDescription.Builder builder = new GestureDescription.Builder();
         GestureDescription gestureDescription = builder

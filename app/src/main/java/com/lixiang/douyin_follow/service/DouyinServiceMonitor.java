@@ -10,6 +10,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.lixiang.douyin_follow.monitor.AliPayMonitor;
+import com.lixiang.douyin_follow.monitor.HuoshanFastMonitor;
 import com.lixiang.douyin_follow.monitor.TaobaoActionMonitor;
 import com.lixiang.douyin_follow.monitor.XiaokeSignMonitor;
 
@@ -43,7 +44,7 @@ public class DouyinServiceMonitor extends AccessibilityService {
         AccessibilityServiceInfo serviceInfo = new AccessibilityServiceInfo();
         serviceInfo.eventTypes = AccessibilityEvent.TYPES_ALL_MASK;
         serviceInfo.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
-        serviceInfo.packageNames = new String[]{"com.ss.android.ugc.aweme", "com.taobao.taobao", "com.facishare.fs","com.eg.android.AlipayGphone"};// 监控的app 抖音包名
+        serviceInfo.packageNames = new String[]{"com.ss.android.ugc.aweme", "com.taobao.taobao", "com.facishare.fs","com.eg.android.AlipayGphone","com.ss.android.ugc.livelite","com.kuaishou.nebula"};// 监控的app 抖音包名
         serviceInfo.notificationTimeout = 100;
         serviceInfo.flags = serviceInfo.flags | AccessibilityServiceInfo.FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY;
         setServiceInfo(serviceInfo);
@@ -73,6 +74,7 @@ public class DouyinServiceMonitor extends AccessibilityService {
                     AliPayMonitor.policy(this,nodeInfo, packageName, className);
 
                     XiaokeSignMonitor.policy(this, nodeInfo, packageName, className);
+                    HuoshanFastMonitor.policy(this, nodeInfo, packageName, className);
                 }
                 break;
             case AccessibilityEvent.TYPE_VIEW_TEXT_TRAVERSED_AT_MOVEMENT_GRANULARITY:
@@ -89,4 +91,5 @@ public class DouyinServiceMonitor extends AccessibilityService {
     public void onInterrupt() {
 
     }
+
 }

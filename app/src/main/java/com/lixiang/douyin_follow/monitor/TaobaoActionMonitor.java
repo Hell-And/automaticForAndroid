@@ -23,47 +23,50 @@ public class TaobaoActionMonitor {
     private static Handler handler = new Handler();
 
     //    && (className.equals("com.taobao.browser.BrowserActivity") || className.equals("com.taobao.browser.exbrowser.BrowserUpperActivity"))
-    public static void policy(DouyinServiceMonitor accessibilityServiceMonitor, final AccessibilityNodeInfo nodeInfo, String packageName, String className) {
-        if (!("com.taobao.taobao".equals(packageName))
+    public static synchronized void policy(DouyinServiceMonitor accessibilityServiceMonitor, final AccessibilityNodeInfo nodeInfo, String packageName, String className) {
+       synchronized (TaobaoActionMonitor.class){
+           if (!("com.taobao.taobao".equals(packageName))
 //                || className.equals("com.taobao.android.home.component.view.viewpager.ViewPager")
 //                || className.equals("com.taobao.tao.welcome.Welcome")
 //                || className.equals("com.taobao.tao.TBMainActivity")
-        ) {
-            return;
-        }
-        List<AccessibilityNodeInfo> homeFlag = nodeInfo.findAccessibilityNodeInfosByText("数码家电买买买");
-        List<AccessibilityNodeInfo> homeFlag1 = nodeInfo.findAccessibilityNodeInfosByText("进口好货买买买");
-        if (homeFlag.size() > 0 || homeFlag1.size() > 0) {
-            AccessibilityNodeInfo homeFlagNode = homeFlag.get(0);
-            Rect rect = new Rect();
-            homeFlagNode.getBoundsInScreen(rect);
-            rect.top = rect.bottom;
-            rect.bottom = rect.bottom + 50;
-            GestureDescriptionUtil.clickMonitor(accessibilityServiceMonitor, rect, null);
-        } else {
+           ) {
+               return;
+           }
+           List<AccessibilityNodeInfo> homeFlag = nodeInfo.findAccessibilityNodeInfosByText("数码家电买买买");
+           List<AccessibilityNodeInfo> homeFlag1 = nodeInfo.findAccessibilityNodeInfosByText("进口好货买买买");
+           List<AccessibilityNodeInfo> homeFlag2 = nodeInfo.findAccessibilityNodeInfosByText("爱家好物买买买");
+           if (homeFlag.size() > 0 || homeFlag1.size() > 0 || homeFlag2.size() > 0) {
+               AccessibilityNodeInfo homeFlagNode = homeFlag.get(0);
+               Rect rect = new Rect();
+               homeFlagNode.getBoundsInScreen(rect);
+               rect.top = rect.bottom;
+               rect.bottom = rect.bottom + 50;
+               GestureDescriptionUtil.clickMonitor(accessibilityServiceMonitor, rect, null);
+           } else {
 
-            List<AccessibilityNodeInfo> finishFlag = nodeInfo.findAccessibilityNodeInfosByText("任务已完成");
-            List<AccessibilityNodeInfo> finishFlag1 = nodeInfo.findAccessibilityNodeInfosByText("任务完成");
-            List<AccessibilityNodeInfo> finishFlag2 = nodeInfo.findAccessibilityNodeInfosByText("领取失败");
-            List<AccessibilityNodeInfo> finishFlag3 = nodeInfo.findAccessibilityNodeInfosByText("返回重试");
-            List<AccessibilityNodeInfo> finishFlag4 = nodeInfo.findAccessibilityNodeInfosByText("今日已达上限");
-            Log.d(TAG, "policy: " + finishFlag1.size());
-            if (finishFlag.size() > 0
-                    || finishFlag1.size() > 0
-                    || finishFlag2.size() > 0
-                    || finishFlag3.size() > 0
-                    || finishFlag4.size() > 0) {
-                accessibilityServiceMonitor.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
-            } else {
+               List<AccessibilityNodeInfo> finishFlag = nodeInfo.findAccessibilityNodeInfosByText("任务已完成");
+               List<AccessibilityNodeInfo> finishFlag1 = nodeInfo.findAccessibilityNodeInfosByText("任务完成");
+               List<AccessibilityNodeInfo> finishFlag2 = nodeInfo.findAccessibilityNodeInfosByText("领取失败");
+               List<AccessibilityNodeInfo> finishFlag3 = nodeInfo.findAccessibilityNodeInfosByText("返回重试");
+               List<AccessibilityNodeInfo> finishFlag4 = nodeInfo.findAccessibilityNodeInfosByText("今日已达上限");
+               Log.d(TAG, "policy: " + finishFlag1.size());
+               if (finishFlag.size() > 0
+                       || finishFlag1.size() > 0
+                       || finishFlag2.size() > 0
+                       || finishFlag3.size() > 0
+                       || finishFlag4.size() > 0) {
+                   accessibilityServiceMonitor.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
+               } else {
 //            handler.postDelayed(new Runnable() {
 //                @Override
 //                public void run() {
-                if (nodeInfo != null) findWebViewNode(accessibilityServiceMonitor, nodeInfo);
+                   if (nodeInfo != null) findWebViewNode(accessibilityServiceMonitor, nodeInfo);
 //                }
 //            }, 1000l);
-            }
-        }
+               }
+           }
 
+       }
         //获取页面状态，是直播还是正常小视频
 //        fabulousClick(accessibilityServiceMonitor, nodeInfo);
     }
@@ -99,7 +102,10 @@ public class TaobaoActionMonitor {
                         }
                     }
 //                return;
-                } else if (text.contains("任务已完成") || text.contains("今日已达上限")) {
+                } else if (text.contains("任务已完成")
+                        || text.contains("今日已达上限")
+                        || text.contains("返回重试")
+                        || text.contains("领取失败")) {
                     accessibilityServiceMonitor.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
                     return;
                 }

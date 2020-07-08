@@ -2,6 +2,7 @@ package com.lixiang.douyin_follow;
 
 import android.app.Application;
 
+import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.mmkv.MMKV;
 
 /**
@@ -17,5 +18,7 @@ public class MyApplication extends Application {
         super.onCreate();
         MMKV.initialize(this);
         application = this;
+
+        CrashReport.initCrashReport(getApplicationContext(), "0a2cca7054", true);
     }
 }

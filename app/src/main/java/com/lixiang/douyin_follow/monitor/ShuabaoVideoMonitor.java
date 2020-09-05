@@ -11,6 +11,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import com.lixiang.douyin_follow.config.ConfigMonitor;
 import com.lixiang.douyin_follow.service.SuperServiceMonitor;
 import com.lixiang.douyin_follow.util.AccessibilitUtil;
+import com.lixiang.douyin_follow.util.GestureDescriptionUtil;
 
 import java.io.OutputStream;
 import java.util.List;
@@ -21,47 +22,42 @@ import java.util.List;
  * Desc: 抖音点赞关注上翻页实现
  * 坐标暂时写死，以小米mix2，1080*2160 测试
  */
-public class DouyinFollowMonitor {
-    private static final DouyinFollowMonitor instance = new DouyinFollowMonitor();
+public class ShuabaoVideoMonitor {
+    private static final ShuabaoVideoMonitor instance = new ShuabaoVideoMonitor();
     private SuperServiceMonitor superServiceMonitor;
     private AccessibilityNodeInfo nodeInfo;
+
+    public static ShuabaoVideoMonitor getInstance() {
+        return instance;
+    }
+
     private Handler handler = new Handler();
     private Runnable runnableMove = new Runnable() {
         @Override
         public void run() {
-            forceMove(superServiceMonitor, nodeInfo);
+            getAcType(superServiceMonitor, nodeInfo);
         }
     };
-    public static DouyinFollowMonitor getInstance() {
-        return instance;
-    }
-    public  void policy(SuperServiceMonitor accessibilityServiceMonitor, AccessibilityNodeInfo nodeInfo, String packageName, String className) {
-        if (!("com.ss.android.ugc.aweme".equals(packageName))) {
+
+    public void policy(SuperServiceMonitor accessibilityServiceMonitor, AccessibilityNodeInfo nodeInfo, String packageName, String className) {
+        if (!("com.jm.video".equals(packageName))) {
             return;
         }
         this.superServiceMonitor = accessibilityServiceMonitor;
         this.nodeInfo = nodeInfo;
-        synchronized (HuoshanFastMonitor.class) {
-            handler.removeCallbacks(runnableMove);
-            handler.postDelayed(runnableMove, ConfigMonitor.delayTime);
-        }
-        //点赞
-        //"com.ss.android.ugc.aweme:id/apw" 页面点赞红心按钮id
-        //"com.ss.android.ugc.aweme:id/bab" 页面关注加好按钮id
-        //可以用findAccessibilityNodeInfosByViewId 方法来查找控件
 
-
-        //获取页面状态，是直播还是正常小视频
-//        getAcType(accessibilityServiceMonitor, nodeInfo);
+        handler.removeCallbacks(runnableMove);
+        handler.postDelayed(runnableMove, ConfigMonitor.delayTime);
     }
 
     /*
      * 点赞按钮模拟点击
      * */
-    private static void fabulousClick(final SuperServiceMonitor accessibilityServiceMonitor, final AccessibilityNodeInfo nodeInfo) {
+    private void fabulousClick(final SuperServiceMonitor accessibilityServiceMonitor, final AccessibilityNodeInfo nodeInfo) {
         Rect rect = new Rect();
         //获取点赞红心按钮的坐标 ,返回的数组可能是多个，包含上一个小视频和下一个小视频，需要取出当前页面的id
-        List<AccessibilityNodeInfo> accessibilityNodeInfos = nodeInfo.findAccessibilityNodeInfosByViewId("com.ss.android.ugc.aweme:id/apw");
+        //com.jm.video:id/ll_video_action
+        List<AccessibilityNodeInfo> accessibilityNodeInfos = nodeInfo.findAccessibilityNodeInfosByViewId("com.ss.android.ugc.aweme.lite:id/w7");
 
         //没有找找到id时，证明不在小视频页面，防止误点所以return
         if (accessibilityNodeInfos.isEmpty()) return;
@@ -86,7 +82,6 @@ public class DouyinFollowMonitor {
             public void onCompleted(GestureDescription gestureDescription) {
                 super.onCompleted(gestureDescription);
                 followClick(accessibilityServiceMonitor, nodeInfo);
-
             }
         }, null);
 //        Log.d("GestureDescription", result + "");
@@ -95,10 +90,10 @@ public class DouyinFollowMonitor {
     /*
      * 关注按钮模拟点击
      * */
-    private static void followClick(final SuperServiceMonitor accessibilityServiceMonitor, final AccessibilityNodeInfo nodeInfo) {
+    private void followClick(final SuperServiceMonitor accessibilityServiceMonitor, final AccessibilityNodeInfo nodeInfo) {
         Rect rect = new Rect();
         //获取点赞红心按钮的坐标 ,返回的数组可能是多个，包含上一个小视频和下一个小视频，需要取出当前页面的id
-        List<AccessibilityNodeInfo> accessibilityNodeInfos = nodeInfo.findAccessibilityNodeInfosByViewId("com.ss.android.ugc.aweme:id/bab");
+        List<AccessibilityNodeInfo> accessibilityNodeInfos = nodeInfo.findAccessibilityNodeInfosByViewId("com.ss.android.ugc.aweme.lite:id/a5s");
 
         if (accessibilityNodeInfos.isEmpty()) return;
         for (AccessibilityNodeInfo accessibilityNodeInfo : accessibilityNodeInfos) {
@@ -135,14 +130,15 @@ public class DouyinFollowMonitor {
      * 模拟上翻页
      * */
     private static void forceMove(SuperServiceMonitor accessibilityServiceMonitor, AccessibilityNodeInfo nodeInfo) {
-        Rect rect = new Rect();
-        nodeInfo.getBoundsInScreen(rect);
-        Path path = new Path();
+//        Rect rect = new Rect();
+//        nodeInfo.getBoundsInScreen(rect);
+//        Path path = new Path();
 //        Log.d("GestureDescription", rect.centerX() + " ->" + rect.centerY());
         int width = AccessibilitUtil.getScreenInfo().get("width");
         int height = AccessibilitUtil.getScreenInfo().get("height");
-        path.moveTo(width / 2, height - 100);
-        path.lineTo(width / 2, 100);
+        GestureDescriptionUtil.moveMonitor(accessibilityServiceMonitor,width / 2,height - 200,width / 2, 200,null);
+        /*path.moveTo(width / 2, height - 200);
+        path.lineTo(width / 2, 200);
         GestureDescription.Builder builder = new GestureDescription.Builder();
         GestureDescription gestureDescription = builder
                 .addStroke(new GestureDescription.StrokeDescription(path, 100L, 200L, false))
@@ -154,26 +150,31 @@ public class DouyinFollowMonitor {
                 super.onCompleted(gestureDescription);
             }
         }, null);
-        Log.d("GestureDescription", result + "");
+        Log.d("GestureDescription", result + "");*/
     }
 
-    public static void getAcType(SuperServiceMonitor accessibilityServiceMonitor, AccessibilityNodeInfo nodeInfo) {
+    public void getAcType(SuperServiceMonitor accessibilityServiceMonitor, AccessibilityNodeInfo nodeInfo) {
         if (nodeInfo != null) {
-            //如果页面有显示直播中的控件，应该就是好友，就没有点赞和关注按钮
-            List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByText("直播中");
-            if (list.isEmpty()) {
-                fabulousClick(accessibilityServiceMonitor, nodeInfo);
-            } else {
-                forceMove(accessibilityServiceMonitor, nodeInfo);
 
-                /*for (AccessibilityNodeInfo item : list) {
-//                这种方式是click实现的点击，而抖音是通过ontouch实现的点击，所以这里isClickable返回的false，这种方式无法模拟点击
-                    if (item.isClickable()) {
-//                        Log.d(TAG, "keepAppPraise = " + item.getClassName());
-                        item.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    }
-                }*/
+            List<AccessibilityNodeInfo> accessibilityNodeInfos = nodeInfo.findAccessibilityNodeInfosByText("点击进入直播间");
+            if (accessibilityNodeInfos.size() > 0) {
+                forceMove(accessibilityServiceMonitor, nodeInfo);
+            } else {
+                //右侧 action
+                accessibilityNodeInfos = nodeInfo.findAccessibilityNodeInfosByViewId("com.jm.video:id/ll_video_action");
+                if (accessibilityNodeInfos.size() > 0) {
+                    forceMove(accessibilityServiceMonitor, nodeInfo);
+                }
             }
+
+
+//            //如果页面有显示直播中的控件，应该就是好友，就没有点赞和关注按钮
+//            List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByText("直播中");
+//            if (list.isEmpty()) {
+//                fabulousClick(accessibilityServiceMonitor, nodeInfo);
+//            } else {
+//                forceMove(accessibilityServiceMonitor, nodeInfo);
+//            }
 
         }
     }

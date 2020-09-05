@@ -4,10 +4,7 @@ import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.os.Build;
@@ -17,13 +14,15 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.lixiang.douyin_follow.MyApplication;
-import com.lixiang.douyin_follow.service.DouyinServiceMonitor;
+import com.lixiang.douyin_follow.service.SuperServiceMonitor;
 import com.lixiang.douyin_follow.util.AccessibilitUtil;
+import com.lixiang.douyin_follow.util.GestureDescriptionUtil;
 import com.lixiang.douyin_follow.util.MMKVutil;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by LoverAnd on 2020/6/5 0005.
@@ -37,7 +36,7 @@ public class XiaokeSignMonitor {
     // 不明白为什么，所以另外想办法，随意找一个按钮跳转有个页面然后返回触发onAccessibilityEvent，这时候就可以拿到输入框的节点了
     private static Rect moreRect = new Rect();
 
-    public static void policy(final DouyinServiceMonitor accessibilityServiceMonitor, final AccessibilityNodeInfo nodeInfo, String packageName, String className) {
+    public static void policy(final SuperServiceMonitor accessibilityServiceMonitor, final AccessibilityNodeInfo nodeInfo, String packageName, String className) {
         if (!("com.facishare.fs".equals(packageName))) {
             return;
         }
@@ -48,27 +47,45 @@ public class XiaokeSignMonitor {
             MMKVutil.instance.putBoolean("isFirst", false);
             accessibilityServiceMonitor.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME);//退到home页
         }
-        if (className.equals("com.facishare.fs.biz_function.subbiz_outdoorsignin.SendOutdoorSigninActivity")) {
-            if (nodeInfo.findAccessibilityNodeInfosByViewId("com.facishare.fs:id/et_content").size() > 0) {
-                inputText(accessibilityServiceMonitor, nodeInfo, "签到@杨威1@马智霞@严巧");
-                //然后点击签到  测试时别随意打开,防止误签
-//            followClick(accessibilityServiceMonitor, nodeInfo, "签到", null);
-            } else {
-                Log.d(TAG, "policy: " + className);
-                int width = AccessibilitUtil.getScreenInfo().get("width");
-                moreRect.left = width - width / 4;
-                moreRect.right = width;
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //这里延时5s  是为了等待定位完成，为了容错 可以加大时长
-                        followClick(accessibilityServiceMonitor, nodeInfo, "", moreRect);
+
+        List<AccessibilityNodeInfo> updateBtn = nodeInfo.findAccessibilityNodeInfosByViewId("com.facishare.fs:id/app_later_button");
+        if (updateBtn.size() > 0) {
+            //取消更新
+            followClick(accessibilityServiceMonitor, updateBtn.get(0), "", moreRect);
+        } else {
+            if (className.equals("com.facishare.fs.biz_function.subbiz_outdoorsignin.SendOutdoorSigninActivity")) {
+                if (nodeInfo.findAccessibilityNodeInfosByViewId("com.facishare.fs:id/et_content").size() > 0) {
+
+                    //结果为0是上午     结果为1是下午
+                    GregorianCalendar ca = new GregorianCalendar();
+                    ca.setTime(new Date());
+                    if (ca.get(GregorianCalendar.AM_PM) == Calendar.PM) {
+                        //下午
+                        inputText(accessibilityServiceMonitor, nodeInfo, "签退@杨威1@马智霞@严巧@冯振超");
+                    } else {
+                        //上午
+                        inputText(accessibilityServiceMonitor, nodeInfo, "签到@杨威1@马智霞@严巧@冯振超");
                     }
-                }, 5000l);
-            }
-        } else if (className.equals("com.facishare.fs.biz_function.subbiz_outdoorsignin.OutDoorMoreActivity")) {
-            //跳转到更多页面，找到返回箭头，模拟返回
-            accessibilityServiceMonitor.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);//退到home页
+
+
+                    //然后点击签到  测试时别随意打开,防止误签
+//            followClick(accessibilityServiceMonitor, nodeInfo, "签到", null);
+                } else {
+                    Log.d(TAG, "policy: " + className);
+                    int width = AccessibilitUtil.getScreenInfo().get("width");
+                    moreRect.left = width - width / 4;
+                    moreRect.right = width;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //这里延时5s  是为了等待定位完成，为了容错 可以加大时长
+                            followClick(accessibilityServiceMonitor, nodeInfo, "", moreRect);
+                        }
+                    }, 5000l);
+                }
+            } else if (className.equals("com.facishare.fs.biz_function.subbiz_outdoorsignin.OutDoorMoreActivity")) {
+                //跳转到更多页面，找到返回箭头，模拟返回
+                accessibilityServiceMonitor.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);//退到home页
            /* List<AccessibilityNodeInfo> more_Back = nodeInfo.findAccessibilityNodeInfosByViewId("com.facishare.fs:id/title_leftgroup");
             if (more_Back.size() > 0) {
                 if (more_Back.get(0).isClickable()) {
@@ -77,19 +94,31 @@ public class XiaokeSignMonitor {
                     followClick(accessibilityServiceMonitor, more_Back.get(0), "", null);
                 }
             }*/
-        } else {
-            findWebViewNode(accessibilityServiceMonitor, nodeInfo);
+            } else {
+                findWebViewNode(accessibilityServiceMonitor, nodeInfo);
+            }
         }
     }
 
-    private static void findWebViewNode(final DouyinServiceMonitor accessibilityServiceMonitor, AccessibilityNodeInfo nodeInfo) {
+    private static void findWebViewNode(final SuperServiceMonitor accessibilityServiceMonitor, AccessibilityNodeInfo nodeInfo) {
+        Rect rect = new Rect();
         for (int i = 0; i < nodeInfo.getChildCount(); i++) {
             final AccessibilityNodeInfo child = nodeInfo.getChild(i);
             if (child == null) continue;
 
+            List<AccessibilityNodeInfo> laterBtn = child.findAccessibilityNodeInfosByViewId("com.facishare.fs:id/app_later_button");
+            List<AccessibilityNodeInfo> updateBtn = child.findAccessibilityNodeInfosByViewId("com.facishare.fs:id/app_upgrade_button");
+            Log.d(TAG, "findWebViewNode: " + laterBtn.size() + "" + updateBtn.size());
+            if (laterBtn.size() > 0) {
+                laterBtn.get(0).getBoundsInScreen(rect);
+                Log.d(TAG, "findWebViewNode: " + rect.centerX() + " - " + rect.centerY());
+                //取消更新
+                followClick(accessibilityServiceMonitor, laterBtn.get(0), "", moreRect);
+                break;
+            }
+
             List<AccessibilityNodeInfo> topNodeInfo = child.findAccessibilityNodeInfosByViewId("com.facishare.fs:id/title_middlegroup");
             if (topNodeInfo.size() > 0) {
-                Rect rect = new Rect();
                 topNodeInfo.get(0).getBoundsInScreen(rect);
                 moreRect.top = rect.bottom;  //页面title部分的底部
                 moreRect.bottom = rect.bottom + (rect.bottom - rect.top); // 页面title部分的底部 加上title部分的高
@@ -109,7 +138,13 @@ public class XiaokeSignMonitor {
                         }
                     }, 200l);
                 } else if (text.equals("应用")) {
+
                     followClick(accessibilityServiceMonitor, child, "应用", null);
+
+                } else if (text.equals("签到")) {
+                    child.getBoundsInScreen(rect);
+                    Log.d(TAG, "findWebViewNode: 点击签到 " + rect.centerX() + " - " + rect.centerY());
+//                    followClick(accessibilityServiceMonitor, child, "签到", null);
                 }
             }
             if (child.getChildCount() > 0) {
@@ -118,10 +153,9 @@ public class XiaokeSignMonitor {
         }
     }
 
-    /*
-     * 关注按钮模拟点击
-     * */
-    private static void followClick(final DouyinServiceMonitor accessibilityServiceMonitor, AccessibilityNodeInfo nodeInfo, final String viewText, Rect rect) {
+
+    private static void followClick(final SuperServiceMonitor accessibilityServiceMonitor, AccessibilityNodeInfo nodeInfo, final String viewText, Rect rect) {
+//        GestureDescriptionUtil.clickMonitor(accessibilityServiceMonitor, nodeInfo, null);
         if (rect == null) {
             rect = new Rect();
             nodeInfo.getBoundsInScreen(rect);
@@ -155,20 +189,6 @@ public class XiaokeSignMonitor {
                 nodeInfo = nodeInfo.getParent();
             }
         }
-
-
-       /* GestureDescription.Builder builder = new GestureDescription.Builder();
-        GestureDescription gestureDescription = builder
-                .addStroke(new GestureDescription.StrokeDescription(path, 100L, 200L, false))
-                .build();
-        boolean result = accessibilityServiceMonitor.dispatchGesture(gestureDescription, new AccessibilityService.GestureResultCallback() {
-            @Override
-            public void onCompleted(GestureDescription gestureDescription) {
-                super.onCompleted(gestureDescription);
-            }
-        }, null);*/
-//        Log.d("GestureDescription", result + ""); com.facishare.fs:id/et_content
-//        accessibilityServiceMonitor.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME);
     }
 
     /**
@@ -178,7 +198,7 @@ public class XiaokeSignMonitor {
      * @param nodeInfo
      * @param text
      */
-    private static void inputText(DouyinServiceMonitor accessibilityServiceMonitor, AccessibilityNodeInfo nodeInfo, String text) {
+    private static void inputText(SuperServiceMonitor accessibilityServiceMonitor, AccessibilityNodeInfo nodeInfo, String text) {
         if (nodeInfo == null) return;
         //签到页面输入框
         findWebViewNode(accessibilityServiceMonitor, nodeInfo);

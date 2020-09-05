@@ -1,21 +1,12 @@
 package com.lixiang.douyin_follow.monitor;
 
 import android.accessibilityservice.AccessibilityService;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.graphics.Rect;
-import android.media.ImageReader;
-import android.media.projection.MediaProjectionManager;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
-import android.view.PixelCopy;
-import android.view.View;
-import android.view.Window;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-import com.lixiang.douyin_follow.service.DouyinServiceMonitor;
+import com.lixiang.douyin_follow.service.SuperServiceMonitor;
 import com.lixiang.douyin_follow.util.AccessibilitUtil;
 import com.lixiang.douyin_follow.util.GestureDescriptionUtil;
 
@@ -34,7 +25,7 @@ public class AliPayMonitor {
     private static Rect userImageRect = new Rect();
     private static int noClickNodeCenterY;
 
-    public static void policy(final DouyinServiceMonitor accessibilityServiceMonitor, final AccessibilityNodeInfo nodeInfo, String packageName, String className) {
+    public static void policy(final SuperServiceMonitor accessibilityServiceMonitor, final AccessibilityNodeInfo nodeInfo, String packageName, String className) {
         if (!("com.eg.android.AlipayGphone".equals(packageName))
                 || className.equals("com.eg.android.AlipayGphone.AlipayLogin")
         ) {
@@ -81,7 +72,7 @@ public class AliPayMonitor {
 
     private static List<AccessibilityNodeInfo> clickNode = new ArrayList<>();
 
-    private static void findWebViewNode(final DouyinServiceMonitor accessibilityServiceMonitor, AccessibilityNodeInfo nodeInfo) {
+    private static void findWebViewNode(final SuperServiceMonitor accessibilityServiceMonitor, AccessibilityNodeInfo nodeInfo) {
         for (int i = 0; i < nodeInfo.getChildCount(); i++) {
             final AccessibilityNodeInfo child = nodeInfo.getChild(i);
             if (child == null) continue;

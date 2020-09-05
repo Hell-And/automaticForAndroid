@@ -1,10 +1,11 @@
 package com.lixiang.douyin_follow;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,14 +16,15 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.lixiang.basesupport.SuperUserActivity;
 import com.lixiang.basesupport.base.BaseActivity;
 import com.lixiang.basesupport.util.PublicUtil;
+import com.lixiang.douyin_follow.Broad.MonitorStatusReceiver;
 import com.lixiang.douyin_follow.model.TimeMonitor;
-import com.lixiang.douyin_follow.service.DouyinServiceMonitor;
+import com.lixiang.douyin_follow.service.SuperServiceMonitor;
+import com.lixiang.douyin_follow.service.TimerIntentService;
 import com.lixiang.douyin_follow.util.AccessibilitUtil;
 import com.lixiang.douyin_follow.util.AlarManagerUtil;
 import com.lixiang.douyin_follow.util.MMKVutil;
@@ -42,9 +44,7 @@ public class MainActivity extends BaseActivity implements TimePicker.OnTimeChang
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         setContentView(R.layout.activity_main);
-        if (System.currentTimeMillis() >= 1592622280000l) {
-            finish();
-        }
+
         MMKVutil.instance.putBoolean("isFirst", true);
         initView();
         //启动服务
@@ -126,7 +126,7 @@ public class MainActivity extends BaseActivity implements TimePicker.OnTimeChang
     }
 
     private void updatePermission() {
-        if (AccessibilitUtil.isAccessibilitySettingsOn(this, DouyinServiceMonitor.class.getCanonicalName())) {
+        if (AccessibilitUtil.isAccessibilitySettingsOn(this, SuperServiceMonitor.class.getCanonicalName())) {
             btnSettings.setEnabled(false);
         } else {
             btnSettings.setEnabled(true);
@@ -134,8 +134,23 @@ public class MainActivity extends BaseActivity implements TimePicker.OnTimeChang
     }
 
     private void startService() {
-        Intent mIntent = new Intent(this, DouyinServiceMonitor.class);
+        Intent mIntent = new Intent(this, SuperServiceMonitor.class);
         startService(mIntent);
+
+        Intent  timerIntent=new Intent(this, TimerIntentService.class);
+        startService(timerIntent);
+
+
+//        MonitorStatusReceiver  monitorStatusReceiver = new MonitorStatusReceiver();
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction("lixiang.nosomething.timer.over");
+//        //当网络发生变化的时候，系统广播会发出值为android.net.conn.CONNECTIVITY_CHANGE这样的一条广播
+//        registerReceiver(monitorStatusReceiver, intentFilter);
+//
+//        Intent newIntent = new Intent("lixiang.nosomething.timer.over");
+//        //第一个参数为包的路径，第二个参数为类名
+////        newIntent.setComponent(new ComponentName("com.lixiang.douyin_follow.Broad", "com.lixiang.douyin_follow.Broad.MonitorStatusReceiver"));
+//        sendBroadcast(newIntent);//发送标准广播
     }
 
     @Override

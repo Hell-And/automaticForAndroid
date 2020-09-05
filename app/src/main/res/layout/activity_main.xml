@@ -21,7 +21,8 @@
             android:text="@string/settings"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <Switch
             android:id="@+id/sw_sign_xiaoke"
@@ -29,9 +30,11 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:text="分享逍客签到"
+            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/sw_signOut_xiaoke"
-            app:layout_constraintTop_toBottomOf="@id/btn_settings" />
+            app:layout_constraintTop_toBottomOf="@id/btn_settings"
+            />
 
         <Switch
             android:id="@+id/sw_signOut_xiaoke"
@@ -39,6 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:text="分享逍客签退"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/sw_sign_xiaoke"
             app:layout_constraintLeft_toRightOf="@id/sw_sign_xiaoke"
             app:layout_constraintRight_toRightOf="parent"
@@ -59,6 +63,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:timePickerMode="spinner"
+            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="@id/sw_sign_xiaoke"
             app:layout_constraintRight_toRightOf="@id/sw_sign_xiaoke"
             app:layout_constraintTop_toBottomOf="@id/sw_sign_xiaoke" />
@@ -68,6 +73,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:timePickerMode="spinner"
+            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="@id/sw_signOut_xiaoke"
             app:layout_constraintRight_toRightOf="@id/sw_signOut_xiaoke"
             app:layout_constraintTop_toBottomOf="@id/sw_signOut_xiaoke" />

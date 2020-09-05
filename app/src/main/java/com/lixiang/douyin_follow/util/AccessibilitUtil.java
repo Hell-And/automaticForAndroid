@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Rect;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -69,6 +70,26 @@ public class AccessibilitUtil {
             List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByViewId(resId);
             if (list != null && !list.isEmpty()) {
                 return list.get(0);
+            }
+        }
+        return null;
+    }
+
+    // 查找第一个 id 节点
+    public static AccessibilityNodeInfo findNodeInfosById(AccessibilityNodeInfo nodeInfo, String resId, int index) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByViewId(resId);
+//            Rect rect = new Rect();
+//            String s =resId+ " : ";
+//            for (AccessibilityNodeInfo accessibilityNodeInfo : list) {
+//                accessibilityNodeInfo.getBoundsInScreen(rect);
+//                s += rect.centerX() + " -> " + rect.centerY() + " ----- ";
+//            }
+//            Log.d(TAG, "findNodeInfosById: " + s);
+
+            if (list != null && !list.isEmpty()) {
+                if (list.size() <= index) return list.get(list.size() - 1);
+                return list.get(index);
             }
         }
         return null;
@@ -140,7 +161,6 @@ public class AccessibilitUtil {
         }
         return true;
     }
-
 
 
     /*

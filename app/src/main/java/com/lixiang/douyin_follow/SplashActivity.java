@@ -16,7 +16,7 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_spalsh);
+        setContentView(R.layout.activity_helper);
 
         if (PublicUtil.getIMEI(this).equals("865737032360084")) {
             toMainPage();
